@@ -1,6 +1,9 @@
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -12,37 +15,50 @@ public class App {
     private DefaultListModel<String> listModel = new DefaultListModel<String>();
     private JButton testButton; // this button is hidden only for test
     private JButton refreshButton;
-    private JButton showDiscInfo;
     private JButton format;
     private JRadioButton radioButtonFAT32;
     private JRadioButton radioButtonNTFS;
+    private JProgressBar progressBar1;
+    private JLabel systemProp;
     private JTextField textCommand; // this field is hidden only for test
     private Runtime runtime = Runtime.getRuntime();
-    private Process process;
-    private BufferedReader reader;
     ExecuteCommand executeCommand = new ExecuteCommand();
 
-    private String selected;
+    private String selected,pcent;
+
 
     public App() {
+        systemProp.setText(System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"));
         refreshButton.addActionListener(e -> refreshDisc());
+
         discList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 selected = discList.getSelectedValue().toString();
-            }
-        });
-        showDiscInfo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (selected !=null) {
-                    executeCommand.commands("df -h " + selected + " --output=source,fstype,size,used,avail,pcent");
-                    textAreaInformation.append(executeCommand.getResult() + "\n");
+                executeCommand.commands("df -h " + selected + " --output=source,fstype,size,used,avail,pcent");
+                textAreaInformation.append(executeCommand.getResult() + "\n");
+
+                // show usage
+                executeCommand.commands("df -h " + selected + " --output=pcent");
+                String a = executeCommand.getResult().toString();
+                if (!StringUtils.isBlank(a)) {
+                    a = a + "end";
+                    int startIndex = a.indexOf("%uż.") + 4;
+                    int endIndex = a.indexOf("%end");
+                    pcent = a.substring(startIndex,endIndex);
+                }
+                int value = Integer.parseInt(pcent.trim());
+                if (value < 70){
+                    progressBar1.setValue(value);
+                    progressBar1.setForeground(Color.BLUE);
+
                 }else {
-                    textAreaInformation.append("Nic nie wybrałeś !"+"\n");
+                    progressBar1.setValue(value);
+                    progressBar1.setForeground(Color.RED);
                 }
             }
         });
+
         format.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,11 +70,13 @@ public class App {
                 }
                 // NTFS
                 if (radioButtonNTFS.isSelected() && !radioButtonFAT32.isSelected()){
+                    textAreaInformation.append("Program chwilowo nie działa na wielu wątkach więc okno programu może się zawiesić w czasie formatowania "+"\n");
                     executeCommand.commands("mkfs.ntfs -f "+ selected);
                     textAreaInformation.append(executeCommand.getResult()+"\n");
                 }
                 // FAT32
                 if (!radioButtonNTFS.isSelected() && radioButtonFAT32.isSelected()) {
+                    textAreaInformation.append("Program chwilowo nie działa na wielu wątkach więc okno programu może się zawiesić w czasie formatowania "+"\n");
                     executeCommand.commands("mkfs.vfat " + selected);
                     textAreaInformation.append(executeCommand.getResult() + "\n");
                 }
@@ -76,13 +94,14 @@ public class App {
         frame.setResizable(false);
         frame.setVisible(true);
 
+
     }
 
     public void refreshDisc(){
         listModel.clear();
         try {
-            process = runtime.exec("lsblk -np --output KNAME");
-            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            Process process = runtime.exec("lsblk -np --output KNAME");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             try {
                 process.waitFor();
             } catch (InterruptedException e) {

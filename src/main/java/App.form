@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="App">
-  <grid id="27dc6" binding="panel1" layout-manager="GridLayoutManager" row-count="5" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="panel1" layout-manager="GridLayoutManager" row-count="5" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="750" height="1023"/>
@@ -9,27 +9,22 @@
       <background color="-4473925"/>
       <minimumSize width="750" height="550"/>
     </properties>
-    <border type="none" title="1.0.0"/>
+    <border type="none" title="1.0.1"/>
     <children>
-      <component id="9ea1c" class="javax.swing.JButton" binding="showDiscInfo">
-        <constraints>
-          <grid row="2" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Pokaż wybraną partycje"/>
-        </properties>
-      </component>
       <component id="cd5c" class="javax.swing.JButton" binding="format">
         <constraints>
-          <grid row="1" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="6" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <focusable value="false"/>
+          <foreground color="-4521963"/>
           <text value="Formatuj"/>
+          <toolTipText value="Obyś wiedział co robisz"/>
         </properties>
       </component>
       <scrollpane id="4ce92">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="7" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -38,14 +33,22 @@
             <constraints/>
             <properties>
               <background color="-7297349"/>
+              <doubleBuffered value="false"/>
+              <dragEnabled value="false"/>
               <model/>
+              <name value=""/>
+              <selectedIndex value="-1"/>
+              <selectionMode value="0"/>
+              <toolTipText value="Lista partycji"/>
+              <valueIsAdjusting value="false"/>
+              <verifyInputWhenFocusTarget value="true"/>
             </properties>
           </component>
         </children>
       </scrollpane>
       <component id="30c71" class="javax.swing.JButton" binding="refreshButton">
         <constraints>
-          <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Odśwież"/>
@@ -53,7 +56,7 @@
       </component>
       <component id="a2ad" class="javax.swing.JRadioButton" binding="radioButtonNTFS">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <hideActionText value="false"/>
@@ -62,7 +65,7 @@
       </component>
       <component id="bbad" class="javax.swing.JRadioButton" binding="radioButtonFAT32">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="FAT32"/>
@@ -70,7 +73,7 @@
       </component>
       <scrollpane id="c56a3">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="7" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -81,11 +84,32 @@
               <editable value="false"/>
               <lineWrap value="true"/>
               <text value="Program musi być uruchomiony jako root. Formatowanie może chwile potrwać."/>
+              <toolTipText value="Wynik zadań"/>
               <wrapStyleWord value="true"/>
             </properties>
           </component>
         </children>
       </scrollpane>
+      <component id="73d7e" class="javax.swing.JProgressBar" binding="progressBar1" default-binding="true">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <orientation value="0"/>
+          <stringPainted value="true"/>
+          <toolTipText value="Użycie wybranej partycji"/>
+          <value value="0"/>
+        </properties>
+      </component>
+      <component id="ea5b2" class="javax.swing.JLabel" binding="systemProp">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="OS"/>
+          <toolTipText value="Ogólne informacje o systemie"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
