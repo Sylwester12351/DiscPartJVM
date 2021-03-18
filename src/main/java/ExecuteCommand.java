@@ -9,7 +9,6 @@ public class ExecuteCommand {
     public StringBuilder getResult() {
         return result;
     }
-
     public void commands(String cmd){
         result.setLength(0);
         try {
