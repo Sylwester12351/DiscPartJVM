@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class App {
     private JPanel panel1;
@@ -24,9 +27,13 @@ public class App {
     private JLabel mouResult;
     private JButton mountUnmount;
     private JLabel FileSysLab;
+    private JButton bootUSBButton;
+    private JButton appInfo;
+    private JButton goGit;
     private JTextField textCommand; // this field is hidden only for test
     private Runtime runtime = Runtime.getRuntime();
     ExecuteCommand executeCommand = new ExecuteCommand();
+    Config config = new Config();
     VerApp verApp = new VerApp();
 
     private String selected,pcent;
@@ -38,6 +45,8 @@ public class App {
     private int ntfsMounted = 0;
     private int otherMounted = 0;
 
+    private String isoPath;
+
     public String getSelected() {
         return selected;
     }
@@ -45,7 +54,7 @@ public class App {
     public App() {
         systemProp.setText(System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"));
         versionApp.setText(verApp.getVer());
-
+        config.openConfigFile();
         discList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -125,8 +134,8 @@ public class App {
                     if (mountResultFix.toString().isEmpty()){
                         ntfsMounted = ntfsMounted + 1;
 
-                        executeCommand.commands("mkdir /mnt/ntfs"+ntfsMounted);
-                        executeCommand.commands("mount -t ntfs "+selected+ " /mnt/ntfs"+ntfsMounted);
+                        executeCommand.commands("mkdir"+" "+config.getMntNTFS()+ntfsMounted);
+                        executeCommand.commands("mount -t ntfs "+selected+" "+config.getMntNTFS()+ntfsMounted);
                         textAreaInformation.append(executeCommand.getResult().toString());
                         refreshDisc();
                     }else {
@@ -138,8 +147,8 @@ public class App {
                     if (mountResultFix.toString().isEmpty()){
                         otherMounted = otherMounted + 1;
 
-                        executeCommand.commands("mkdir /mnt/other"+otherMounted);
-                        executeCommand.commands("mount "+selected+" /mnt/other"+otherMounted);
+                        executeCommand.commands("mkdir"+" "+config.getMntOTHER()+otherMounted);
+                        executeCommand.commands("mount "+selected+" "+config.getMntOTHER()+otherMounted);
                         textAreaInformation.append(executeCommand.getResult().toString());
                         refreshDisc();
                     }else {
@@ -150,10 +159,47 @@ public class App {
                 }
             }
         });
+
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 refreshDisc();
+            }
+        });
+
+        bootUSBButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               if (selected == null){
+                   textAreaInformation.append("Nic nie zostało wybrane"+"\n");
+               }else {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    fileChooser.showDialog(null,"Wybierz obraz systemu");
+                    isoPath = fileChooser.getSelectedFile().getPath();
+                    executeCommand.commands("dd bs=4M if=" + isoPath + " of="+selected + " " + "status=progress oflag=sync");
+                    textAreaInformation.append(executeCommand.getResult().toString());
+                    JOptionPane.showMessageDialog(null,"Wykonano ! ");
+               }
+            }
+        });
+
+        appInfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null,"Program umożliwia formatowanie partycji i tworzenie bootowalnego pendrive z systemem Ubuntu" +
+                        "\n"+"Wersja: " + verApp.getVer()+ "\n" + "Sylwester Gawroński");
+            }
+        });
+
+        goGit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URL("https://github.com/Sylwester12351/DiscPartJVM").toURI());
+                } catch (IOException | URISyntaxException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
     }
@@ -181,15 +227,17 @@ public class App {
                 process.waitFor();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                textAreaInformation.append(e.getMessage()+"\n");
             }
             String line;
             while ((line = reader.readLine()) !=null){
                 listModel.addElement(line);
             }
             discList.setModel(listModel);
-            textAreaInformation.setText("Wykonano polecenie : lsblk -np --output KNAME"+"\n");
+            textAreaInformation.setText("Odświeżono"+"\n");
         } catch (IOException e) {
             e.printStackTrace();
+            textAreaInformation.append(e.getMessage()+"\n");
         }
     }
 }

@@ -22,6 +22,7 @@ public class ExecuteCommand {
             String line;
             while ((line = reader.readLine()) !=null){
                 result.append(line);
+
             }
 
         } catch (IOException e) {
